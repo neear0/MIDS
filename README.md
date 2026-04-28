@@ -1,5 +1,5 @@
 # MIDS
-Modular Intrusion Detective Software or MIDS for short!
+Modular Intrusion Detective Software or MIDS for short!<br/>
 [![C++20](https://img.shields.io/badge/C%2B%2B-20-blue.svg)](https://en.cppreference.com/w/cpp/20)
 [![CMake](https://img.shields.io/badge/build-CMake%203.16%2B-064F8C.svg)](https://cmake.org/)
 [![Platforms](https://img.shields.io/badge/platforms-Linux%20%7C%20macOS%20%7C%20Windows-lightgrey.svg)](#build)
