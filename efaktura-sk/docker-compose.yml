@@ -1,0 +1,43 @@
+# Local development stack. Production target: EU region (e.g. Hetzner / AWS eu-central-1).
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: efaktura
+      POSTGRES_PASSWORD: efaktura
+      POSTGRES_DB: efaktura
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U efaktura"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build: ./backend
+    env_file: [./backend/.env.example]
+    environment:
+      EFAKTURA_DATABASE_URL: postgresql+psycopg://efaktura:efaktura@db:5432/efaktura
+    ports: ["8000:8000"]
+    depends_on:
+      db: {condition: service_healthy}
+
+  worker:
+    build: ./backend
+    command: ["python", "-m", "app.worker"]
+    env_file: [./backend/.env.example]
+    environment:
+      EFAKTURA_DATABASE_URL: postgresql+psycopg://efaktura:efaktura@db:5432/efaktura
+    depends_on:
+      db: {condition: service_healthy}
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000  # baked into the browser bundle at build time
+    ports: ["3000:3000"]
+    depends_on: [api]
+
+volumes:
+  pgdata:
